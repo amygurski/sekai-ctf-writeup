@@ -63,7 +63,7 @@ Looking in the `Texture2D` folder there is a picture called `flag.png` and sure 
 
 ## Problem Statement
 
-We are given an [SVG file](https://ctf.sekai.team/files/d7ced45e98c0db6d2423ebd85f2a7a2e/ilovethisworld.svp?token=eyJ1c2VyX2lkIjoxMDQsInRlYW1faWQiOjU5LCJmaWxlX2lkIjoyMH0.ZO0g4w.MDAuLn5HJot8BDRh-7SKVQA0HRE) to download with this description:
+We are given an [SVG file](https://github.com/amygurski/sekai-ctf-writeup/blob/main/i-love-this-world/ilovethisworld.svp) to download with this description:
 
 > Vocaloid is a great software to get your computer sing the flag out to you, but what if you can’t afford it? No worries, there are plenty of other free tools you can use. How about — let’s say — this one?
 
