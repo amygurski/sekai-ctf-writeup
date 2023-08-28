@@ -79,7 +79,7 @@ Opening the file (I used VSCode with a json-prettifier extension), we see it loo
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/0d6c4111-f72b-45b9-a80b-44a41aac1004)
 
-## The Rabbit Hole
+## Rabbit Hole
 Searching the file for "S", we see an "SE" in the lyrics.
 
 Throwing together a script to extract the lyrics fields from the json:
@@ -109,7 +109,7 @@ Few, so this must not be the right place to focus. Back to the drawing board!
 
 fake flag: `SEKAI{がぼくわすきなんだ}`
 
-## The solution is in the phonemes
+## Solution is in the phonemes
 Looking at the JSON some more, noticed that there were also "phonemes" fields. The first one had "eh f", which would be "f". Then "eh l", which could be "l". 
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/9f914b18-49f0-423c-b8d5-73f2cd681d31)
@@ -122,13 +122,15 @@ Continuing on this path, we get:
 
 The beginning clearly sounds out `flag:sekai{s` so it feels like I'm on the right track.
 
-Trying to make sense of the rest became a bit tedious, so I decided to write a script, which mapped phonemes to letters, numbers, and symbols, with a bit of guesswork, and put question marks in the dictionary where I wasn't sure until I eventually had a complete flag:
+### Scripting the solution
+
+Trying to make sense of the rest became a bit tedious, so I decided to write a small script, which mapped phonemes to letters, numbers, and symbols, and put question marks in the dictionary where I wasn't sure:
 
 `flag:sekai{s?me??faraway?mr??se?uel???ur?ream??y}`
 
-From there, I could make slightly more educated guesses, e.g. "w ah n" == 1, til I had the flag.
+From there, I could make slightly more educated guesses, e.g. "w ah n" == 1, til I had the completed flag.
 
-### Solve script
+** Completed script **
 
 ```
 import json
