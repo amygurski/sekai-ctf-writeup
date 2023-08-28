@@ -36,9 +36,9 @@ Navigating to the `-` namespace and reading the source code, we see a variable n
 
 Looking at the code further, there is a `DisplayFourStarCharacter` method, which loads a `Texture2D` image:
 
-![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/be5e4afb-7249-414f-be85-ac1b3426b9b4)
+![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/b1c1a647-ca93-4291-9e7a-9a5c04bd061d)
 
-At this point, I think I'm going to have to do more shenanigans to get the data set to the flag image, but decided to checkout the assets first.
+At this point, I think I'm going to have to do more shenanigans and understanding the code to get the flag, but decided to checkout the assets first.
 
 ## Extracting the assets
 I used [AssetStudioGUI](https://github.com/Perfare/AssetStudio/) for this. This repo is deprecated so there are probably other tools out there. Simply loaded the folder in AssetStudioGUI (hint: turn off `Debug -> Show Error Messages`) and waited. Once it had extracted the assets, I exported them all to search outside the AssetStudioGUI UI.
