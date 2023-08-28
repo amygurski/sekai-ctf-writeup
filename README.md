@@ -122,7 +122,7 @@ Continuing on this path, we get:
 
 The beginning clearly sounds out `flag:sekai{s` so it feels like I'm on the right track.
 
-### Scripting the solution
+## Scripting the solution
 
 Trying to make sense of the rest became a bit tedious, so I decided to write a small script, which mapped phonemes to letters, numbers, and symbols, and put question marks in the dictionary where I wasn't sure:
 
