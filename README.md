@@ -394,16 +394,39 @@ The first step was to read in the file, breaking it down into the 4 steps and us
 
 Once that was complete, it was a matter of determining if there was a path from the source to the destination.
 
-I found a python library written for graphs that did this beautifully:
+I found a python library written for graphs that did this beautifully: https://networkx.org/documentation/latest/reference/classes/digraph.html
+
+Once I had read in the edges, source, and destination targest from the input file, the library did the rest:
+
+```
+    graph = nx.DiGraph()
+    graph.add_edges_from(edges)
+
+    try:
+        path = nx.shortest_path(graph, source=source, target=target)
+        if len(path) <= 7:
+            return "YES"
+    except Exception:
+        return "NO"
+
+    return "NO"
+```
+
+[Link to the initial solution code](https://github.com/amygurski/sekai-ctf-writeup/blob/main/wiki-game/first_working_but_invalid_solution.py)
 
 But when I submitted it, I received a Runtime error. I submitted a ticket and found out I couldn't use any python libraries.
 
 ## Writing a working solution
 At this point, I was tempted to give up, because I really didn't wanna write an algorithm to do this. But I was so close. So I persevered...
 
-The solution I used was mostly this, but giving everything an equal weight and not allowing the other direction (i.e. if an edge is 0 9, it can't go 9 0):
+The next algorithm I tried was too slow (it timed out when trying to submit it). It used recursion to find the paths between the source and destination vertex.
 
+The solution I landed on was Dijkstra's algorithm, which finds the paths between the start node and all edges in the graph and takes into account both weight (e.g. if it costs more to take one path than another) and bi-directionality. So I simplified it slightly and easily by just giving all edges equal weight and and not allowing the other direction (i.e. if an edge is 0 9, it can't go 9 0).
+
+This was the main reference used to come up with the final working - no-python-library-used - solution:
 https://www.udacity.com/blog/2021/10/implementing-dijkstras-algorithm-in-python.html
+
+[Link to the valid submission code](https://github.com/amygurski/sekai-ctf-writeup/blob/main/wiki-game/valid_solution_no_libs.py)
 
 ## The flag
 `SEKAI{hyp3rL1nk_cha115_4r3_EZ}`
