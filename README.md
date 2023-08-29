@@ -366,3 +366,40 @@ XORDecrypt $KEY $TESTSTRING #| base64 -D
 
 ### The flag
 `SEKAI{3v4l_g0_8rrrr_8rrrrrrr_8rrrrrrrrrrr_!!!_8483}`
+
+## Wiki Game
+|   |   |
+|---|--|
+| Category: | PPC |
+| Tools used: | python scripting, much googling |
+
+## Problem Statement
+
+We are given a nice written problem statement and helpfully an example input file.
+
+## Understanding the problem
+
+We have an directed graph (https://en.wikipedia.org/wiki/Directed_graph) where:
+1. Line 1 is the number of test cases.
+2. The first line of each test case is the number of vertices (n) and edges (m) respectively.
+3. The next m lines describe the graph.
+4. The last line of the test case are the source and target vertices.
+
+Our task is to determine for each test case if there is a path path length of 6 or less.
+
+Print "YES" if there is an acceptable path, "NO" if not.
+
+## Writing a solution
+The first step was to read in the file, breaking it down into the 4 steps and using the small sample output with only 1 then 2 test cases.
+
+Once that was complete, it was a matter of determining if there was a path from the source to the destination.
+
+I found a python library written for graphs that did this beautifully:
+
+But when I submitted it, I received a Runtime error. I submitted a ticket and found out I couldn't use any python libraries.
+
+## Writing a working solution
+At this point, I was tempted to give up, because I really didn't wanna write an algorithm to do this. But I was so close. So I persevered...
+
+## References
+https://www.udacity.com/blog/2021/10/implementing-dijkstras-algorithm-in-python.html
