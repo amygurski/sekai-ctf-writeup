@@ -201,7 +201,7 @@ print(flag)
 
 `nc chals.sekai.team 9000`
 
-And a network capture: capture.pcapng
+And a network capture: [capture.pcapng](https://ctf.sekai.team/files/a9488e1e270f54d404ea6a2e2f89805f/capture.pcapng?token=eyJ1c2VyX2lkIjoxMDQsInRlYW1faWQiOjU5LCJmaWxlX2lkIjo0OH0.ZO0-eg.6Xzim2X9sVy46FjohbZZVj6_Sa0)
 
 ### Initial discovery - `nc chals.sekai.team 9000`
 Connecting we see the CTF challenge that was mentioned in the problem statement. Interacting with it, we see that if we answer correctly, it says "Too slow". So clearly if we are going to solve the challenge, we are going to need to write a script to read in the equation and send back the result. But do we even have to solve this challenge? At this point, I'm not sure!
@@ -280,7 +280,7 @@ And looking in the directory, sure enough, we have a new `extract.sh` script:
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/81eb5759-7da2-459e-876b-c10a6ec3aafd)
 
 ### `extract.sh`
-Looking at the new script, we see that it reads in some text in flag.txt and encrypts it using an `XOREncypt()` function and a KEY which we are helpfully given.
+Looking at the new script, we see that it reads in some text in flag.txt and encrypts it using an `XOREncypt()` function and a `KEY` which we are helpfully given.
 
 It then sends an HTTP POST request to an address and with a body matching our network capture. So it's all coming together now!
 
@@ -325,7 +325,7 @@ exit 0
 ### Decrypting the data
 We now have the encrypted data and a key, so we just need to reverse the encryption script. Or do we!?
 
-Looking at the credit URL, we see we are helpfully givem then decrption script: https://gist.github.com/kaloprominat/8b30cda1c163038e587cee3106547a46
+Looking at the credit URL, we see we are helpfully given the decryption script: https://gist.github.com/kaloprominat/8b30cda1c163038e587cee3106547a46
 
 We give it our KEY and TESTSTRING and sure enough we get the flag!
 
