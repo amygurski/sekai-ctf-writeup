@@ -401,5 +401,12 @@ But when I submitted it, I received a Runtime error. I submitted a ticket and fo
 ## Writing a working solution
 At this point, I was tempted to give up, because I really didn't wanna write an algorithm to do this. But I was so close. So I persevered...
 
+The solution I used was mostly this, but giving everything an equal weight and not allowing the other direction (i.e. if an edge is 0 9, it can't go 9 0):
+
+https://www.udacity.com/blog/2021/10/implementing-dijkstras-algorithm-in-python.html
+
+## The flag
+`SEKAI{hyp3rL1nk_cha115_4r3_EZ}`
+
 ## References
 https://www.udacity.com/blog/2021/10/implementing-dijkstras-algorithm-in-python.html
