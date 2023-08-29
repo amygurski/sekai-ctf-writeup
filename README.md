@@ -1,8 +1,9 @@
 # SEKAI CTF Writeups
 |   |   |
 |---|---|
-| Date: | Fri, 25 Aug. 2023, 16:00 UTC — Sun, 27 Aug. 2023, 16:00 UTC  |
 | Event Details: | https://ctftime.org/event/1923/ |
+| Date: | Fri, 25 Aug. 2023, 16:00 UTC — Sun, 27 Aug. 2023, 16:00 UTC  |
+| Flag Format: | `SEKAI\{[A-Z0-9]+\}` |
 
 Because this was geared toward more intermediate players, I focused on the one ⭐ (least difficult) challenges.
 
@@ -12,11 +13,11 @@ Because this was geared toward more intermediate players, I focused on the one �
 | Category: | Reverse  |
 | Tools used: | [ILSpy](https://github.com/icsharpcode/ILSpy/) & [AssetStudioGUI](https://github.com/Perfare/AssetStudio/) 
 
-## Problem Statement
+### Problem Statement
 
 We are given a [dist.zip](https://storage.googleapis.com/sekaictf-2023/azusawa/dist.zip) file to download.
 
-## Initial Discovery
+### Initial Discovery
 The first thing to note is that it's a Unity game. 
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/b689bfd1-48e7-4102-87f5-579014e0767a)
@@ -24,7 +25,7 @@ The first thing to note is that it's a Unity game.
 We can even run the game and check it out.
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/4fbe0a93-dbab-4353-b8ef-e88140d8d40e)
 
-## Decompiling the game
+### Decompiling the game
 
 I used [ILSpy](https://github.com/icsharpcode/ILSpy/) to decompile the game.
 
@@ -32,7 +33,7 @@ By default, Unity compiles all scripts together into a single file named `Assemb
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/31cdfd67-0620-4bb1-953a-cc5b7e8300b5)
 
-## Inspecting the code
+### Inspecting the code
 Navigating to the `-` namespace and reading the source code, we see a variable named `flagimage` inside the `UIManager`. That sounds promising!
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/9a69053c-3a6d-4d70-9784-b821b9c1b684)
@@ -43,15 +44,15 @@ Looking at the code further, there is a `DisplayFourStarCharacter` method, which
 
 At this point, I think I'm going to have to do more shenanigans and understanding the code to get the flag, but decided to checkout the assets first.
 
-## Extracting the assets
+### Extracting the assets
 I used [AssetStudioGUI](https://github.com/Perfare/AssetStudio/) for this. This repo is deprecated so there are probably other tools out there. Simply loaded the folder in AssetStudioGUI (hint: turn off `Debug -> Show Error Messages`) and waited. Once it had extracted the assets, I exported them all to search outside the AssetStudioGUI UI.
 
-## Finding the flag
+### Finding the flag
 Looking in the `Texture2D` folder there is a picture called `flag.png` and sure enough it has a flag fitting our format. At this point, I was still sure it would be a red herring, but submitted it and it was correct!
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/d624505a-77c5-415b-b9ca-bce0b4551a97)
 
-## The flag
+### The flag
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/4c4f1f38-6e97-4065-ba73-8d99ee2b4d4c)
 
@@ -61,13 +62,13 @@ Looking in the `Texture2D` folder there is a picture called `flag.png` and sure 
 | Category: | Misc  |
 | Tools used: | python scripting (optional) |
 
-## Problem Statement
+### Problem Statement
 
 We are given an [SVG file](https://github.com/amygurski/sekai-ctf-writeup/blob/main/i-love-this-world/ilovethisworld.svp) to download with this description:
 
 > Vocaloid is a great software to get your computer sing the flag out to you, but what if you can’t afford it? No worries, there are plenty of other free tools you can use. How about — let’s say — this one?
 
-## Initial Discovery
+### Initial Discovery
 
 The file is an SVP file. Googling `svp file` one of the 1st results that gomes up in the search has the snippet:
 
@@ -79,7 +80,7 @@ Opening the file (I used VSCode with a json-prettifier extension), we see it loo
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/0d6c4111-f72b-45b9-a80b-44a41aac1004)
 
-## Rabbit Hole
+### Rabbit Hole
 Searching the file for "S", we see an "SE" in the lyrics.
 
 Throwing together a script to extract the lyrics fields from the json:
@@ -109,7 +110,7 @@ Few, so this must not be the right place to focus. Back to the drawing board!
 
 fake flag: `SEKAI{がぼくわすきなんだ}`
 
-## Solution is in the phonemes
+### Solution is in the phonemes
 Looking at the JSON some more, noticed that there were also "phonemes" fields. The first one had "eh f", which would be "f". Then "eh l", which could be "l". 
 
 ![image](https://github.com/amygurski/sekai-ctf-writeup/assets/49253356/9f914b18-49f0-423c-b8d5-73f2cd681d31)
@@ -122,7 +123,7 @@ Continuing on this path, we get:
 
 The beginning clearly sounds out `flag:sekai{s` so it feels like I'm on the right track.
 
-## Scripting the solution
+### Scripting the solution
 
 Trying to make sense of the rest became a bit tedious, so I decided to write a small script, which mapped phonemes to letters, numbers, and symbols, and put question marks in the dictionary where I wasn't sure:
 
@@ -185,5 +186,5 @@ for note in notes:
 print(flag)
 ```
 
-## The flag
+### The flag
 `sekai{some1zfarawaytmr15sequeltoourdreamtdy}`
